@@ -2,8 +2,10 @@ import React from "react";
 import { FiShoppingBag } from "react-icons/fi";
 import { MdPersonOutline } from "react-icons/md";
 import { Link, NavLink } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const Navbar = () => {
+  const items = useSelector((state) => state.cart);
   return (
     <nav className="w-full h-[60px] bg-white fixed top-0 left-0 z-20 border-b px-[20px] md:px-[50px] flex items-center justify-between">
       <div className="logo">
@@ -16,12 +18,12 @@ const Navbar = () => {
       <div className="menu flex items-center gap-6">
         <NavLink
           to={"/cart"}
-          className={({ isActive }) => `
+          className={({ isActive }) => ` flex gap-2
            hover:text-[#777] cursor-pointer ${
              isActive ? "text-indigo-400" : "text-[#555]"
            }`}
         >
-          <FiShoppingBag size={20} />
+          <FiShoppingBag size={20} /> <span>{items.length}</span>
         </NavLink>
         <NavLink
           to={"profile"}
