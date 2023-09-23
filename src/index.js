@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import FirebaseProvider from './context/firebaseContext';
 import Home from './App';
 import Cart from './pages/cart';
 import Profile from "./pages/profile"
@@ -39,7 +40,9 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <RouterProvider router={router} />
+      <FirebaseProvider>
+        <RouterProvider router={router} />
+      </FirebaseProvider>
     </Provider>
   </React.StrictMode>
 );
