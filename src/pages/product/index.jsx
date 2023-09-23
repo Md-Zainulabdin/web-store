@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { productList } from "../../data/products";
 import { AiOutlineShopping } from "react-icons/ai";
 import { BiShoppingBag } from "react-icons/bi";

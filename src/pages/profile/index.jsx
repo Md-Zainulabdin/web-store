@@ -1,9 +1,13 @@
-import React from 'react'
+import React from "react";
+import ProductForm from "../../components/ProductForm";
 
 const Profile = () => {
   return (
-    <div>Profile</div>
-  )
-}
+    <div>
+      <h1>Profile</h1>
+      <ProductForm />
+    </div>
+  );
+};
 
-export default Profile
+export default Profile;
