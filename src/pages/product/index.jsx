@@ -1,32 +1,45 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { productList } from "../../data/products";
 import { AiOutlineShopping } from "react-icons/ai";
-import { BiShoppingBag } from "react-icons/bi";
 import { useDispatch } from "react-redux";
 import { addItem } from "../../Store/cartSlice";
+import { addProductToast } from "../../libs/toast";
+import RelatedProductCard from "../../components/RelatedProductCard";
+import { useFirebase } from "../../context/firebaseContext";
 
 const Product = () => {
+  const firebase = useFirebase();
   const dispatch = useDispatch();
   const { productId } = useParams();
-  const [product, setProduct] = useState(productList);
-
-  for (let i = 0; i <= product.length; i++) {
-    if (product[i].id === +productId) {
-      setProduct(product[i]);
-      break;
+  const [product, setProduct] = useState([]);
+  const [allproducts, setAllProducts] = useState([]);
+  useEffect(() => {
+    firebase.AllProducts().then((products) => setAllProducts(products.docs));
+    for (let i = 0; i <= allproducts?.length; i++) {
+      if (allproducts[i]?.data()?.id == productId) {
+        setProduct(allproducts[i]);
+        break;
+      }
     }
-  }
 
-  const relatedProducts = productList.filter(
-    (item) => item.Cat === product.Cat && item.id !== product.id
-  );
+  }, [product]);
 
-  const addProducthandler = (product) => {
-    dispatch(addItem(product));
-  };
-  return (
-    <div className="w-full flex flex-col gap-6 overflow-hidden">
+
+  // const relatedProducts = product.filter(
+  //   (item) => item.Cat === product.Cat && item.id !== product.id
+  // );
+
+  // const addProducthandler = (product) => {
+  //   dispatch(addItem(product));
+  //   addProductToast(`product added succesfully`);
+  // };
+  return <div>hello world</div>;
+};
+
+export default Product;
+
+{
+  /* <div className="w-full flex flex-col gap-6 overflow-hidden">
       <div className="row1 flex flex-col md:flex-row gap-6 mt-8">
         <div className="img w-full md:w-[50%] flex justify-center items-center border-r">
           <img src={product.Img} alt={product.Title} className="w-[500px]" />
@@ -67,44 +80,9 @@ const Product = () => {
           </div>
 
           <div className="product w-full flex flex-wrap gap-8">
-            {relatedProducts.map((item) => (
-              <div
-                className="w-[270px] border rounded-lg overflow-hidden cursor-pointer bg-white shadow-sm relative"
-                key={item.id}
-              >
-                <div className="w-full">
-                  <div className="img-box border-b overflow-hidden">
-                    <img
-                      src={item.Img}
-                      alt={item.Title}
-                      className="w-[250px] hover:scale-[1.05] transition duration-300 "
-                    />
-                  </div>
-
-                  <div className="desc p-4 flex items-center justify-between">
-                      <h1 className="text-lg font-medium text-[#555] hover:underline">
-                        {item.Cat}
-                      </h1>
-                    <span className="text-md font-medium text-indigo-500">
-                      $ {item.Price}
-                    </span>
-                  </div>
-
-                  <div className="w-full title px-4 pb-4">
-                    <h2 className="text-md text-[#777]">{item.Title}</h2>
-                  </div>
-
-                  <div className="product-btn w-full p-4">
-                    <div className="border hover:border-indigo-400 hover:text-indigo-400 text-[#333] w-full rounded-md text-center flex items-center justify-center p-3"><BiShoppingBag/></div>
-                  </div>
-                </div>
-              </div>
-            ))}
+            <RelatedProductCard relatedProducts={relatedProducts} />
           </div>
         </div>
       </div>
-    </div>
-  );
-};
-
-export default Product;
+    </div> */
+}

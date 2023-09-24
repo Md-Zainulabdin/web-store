@@ -1,29 +1,33 @@
 import React, { useState } from "react";
 import { useFirebase } from "../context/firebaseContext";
+import { addProductToast } from "../libs/toast.js";
 import { useRef } from "react";
-import { async } from "@firebase/util";
 
 const ProductForm = () => {
   const firebase = useFirebase();
   const [image, setImage] = useState("");
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
-  const [price, setPrice] = useState(0);
+  const [price, setPrice] = useState("");
+  const [option, setOption] = useState("");
   const inputRef = useRef(null);
 
   const showInput = () => {
     inputRef.current.click();
   };
 
-  const handleImageInput = (e) => {
+  const handleImageInput = async (e) => {
     const file = e.target.files[0];
-    setImage(file);
+    const base64 = await convertToBase64(file);
+    setImage(base64);
   };
 
   const formSubmitHandler = async (e) => {
     e.preventDefault();
-    await firebase.handleCreateProduct(title, desc, price, image);
+    await firebase.handleCreateProduct(title, desc, price, option, image);
+    addProductToast("Product Create Successfully");
   };
+
   return (
     <div className="w-full border p-6 bg-white shadow-md">
       <div className="title">
@@ -68,6 +72,33 @@ const ProductForm = () => {
           />
         </div>
 
+        <div className="category">
+          <select
+            className="outline-0 border py-2 w-full px-3"
+            required
+            onChange={(e) => setOption(e.target.value)}
+          >
+            <option disabled selected>
+              Select your Category
+            </option>
+            <option value="Smartphone" className="text-lg text-[#666]">
+              Smartphone
+            </option>
+            <option value="laptop" className="text-lg text-[#666]">
+              Laptop
+            </option>
+            <option value="power bank" className="text-lg text-[#666]">
+              Power Bank
+            </option>
+            <option value="gaming" className="text-lg text-[#666]">
+              Gaming
+            </option>
+            <option value="camera" className="text-lg text-[#666]">
+              Camera
+            </option>
+          </select>
+        </div>
+
         <div className="my-2">
           <span
             onClick={showInput}
@@ -84,12 +115,13 @@ const ProductForm = () => {
             required
             className="hidden"
           />
+          {image && <span className="text-sm ml-6">Image Selected</span>}
         </div>
 
         <div>
           <button
             type="submit"
-            className="w-full text-center p-2 bg-indigo-500 text-white rounded-md"
+            className="w-full text-center p-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-md"
           >
             Create Product
           </button>
@@ -100,3 +132,16 @@ const ProductForm = () => {
 };
 
 export default ProductForm;
+
+function convertToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const fileReader = new FileReader();
+    fileReader.readAsDataURL(file);
+    fileReader.onload = () => {
+      resolve(fileReader.result);
+    };
+    fileReader.onerror = (error) => {
+      reject(error);
+    };
+  });
+}

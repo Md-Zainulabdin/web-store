@@ -1,7 +1,7 @@
 import { createContext, useContext } from "react";
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc } from "firebase/firestore";
-import { getStorage, ref, uploadBytes } from "firebase/storage";
+import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore";
+import { nanoid } from "nanoid";
 
 const FirebaseContext = createContext(null);
 const firebaseConfig = {
@@ -15,26 +15,29 @@ const firebaseConfig = {
 
 const firebaseApp = initializeApp(firebaseConfig);
 const firestore = getFirestore(firebaseApp);
-const storage = getStorage(firebaseApp)
 export const useFirebase = () => useContext(FirebaseContext);
 
 const FirebaseProvider = ({ children }) => {
-  const handleCreateProduct = async (title, desc, price, img) => {
-    const imageRef = ref(storage, `uploads/images/${Date.now()}-${img.name}`);
-    const imageResult = await uploadBytes(imageRef, img)
-
+  const handleCreateProduct = async (title, desc, price, option, img) => {
     await addDoc(collection(firestore, "products"), {
+      id: nanoid(),
       title,
       desc,
       price,
-      image: imageResult.ref.fullPath,
+      category: option,
+      image: img,
     });
+  };
+
+  const AllProducts = () => {
+    return getDocs(collection(firestore, "products"));
   };
 
   return (
     <FirebaseContext.Provider
       value={{
         handleCreateProduct,
+        AllProducts,
       }}
     >
       {children}
